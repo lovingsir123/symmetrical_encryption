@@ -1,0 +1,7 @@
+flask
+flask-login
+flask-wtf
+argon2-cffi
+pycryptodome
+python-dotenv
+pytest
