@@ -97,6 +97,9 @@ def derive_keys(master: bytes, salt: bytes) -> dict[str, bytes]:
     weak-key retry loop that encryption used (labels des -> des-2 -> des-3,
     CryptoError if still weak after all three).
     """
+    # Trust boundary: reject empty/malformed master before HKDF, generic msg only.
+    if not isinstance(master, bytes) or len(master) < 32:
+        raise CryptoError("key derivation failed")
     keys = {
         label: HKDF(master, length, salt, SHA256, context=label.encode())
         for label, length in _KEY_LEN.items()

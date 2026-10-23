@@ -40,6 +40,18 @@ def test_derive_keys_deterministic():
     assert k1 == k2
 
 
+def test_derive_keys_rejects_malformed_master():
+    for bad in [b"", b"\x00" * 31, bytearray(range(32)), "x" * 32, None, 12345]:
+        with pytest.raises(CryptoError):
+            crypto.derive_keys(bad, b"s" * 16)
+
+
+def test_derive_keys_accepts_exact_32b_master():
+    keys = crypto.derive_keys(bytes(range(32)), b"s" * 16)
+    assert len(keys["aes"]) == 32 and len(keys["des"]) == 8
+    assert crypto.derive_keys(bytes(range(32)), b"s" * 16) == keys
+
+
 def test_derive_keys_des_weak_check_unit():
     # 0x0101010101010101 is the canonical weak key; parity-adjusted 0x0000... maps onto it.
     assert crypto._is_des_key_weak(b"\x01" * 8)
