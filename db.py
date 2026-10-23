@@ -38,12 +38,17 @@ def init_db(app) -> None:
 
 
 def init_db_command() -> None:
-    """CLI: create the SQLite database file."""
+    """Create the SQLite database file."""
     init_db(current_app)
     click.echo("Database initialized.")
 
 
 def register(app) -> None:
-    """Register teardown and CLI command on the app."""
+    """Register teardown and the `flask init-db` CLI command on the app."""
     app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+    app.cli.command("init-db")(init_db_command)
+
+    # Ensure instance directories exist for runtime data.
+    os.makedirs(os.path.dirname(app.config["DATABASE"]), exist_ok=True)
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
