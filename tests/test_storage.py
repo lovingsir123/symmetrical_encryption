@@ -101,6 +101,20 @@ def test_load_db_owner_flipped_none(app, store, user_db):
     assert storage.load_user_file(2, row["id"], master=MASTER) is None
 
 
+def test_load_blob_missing_on_disk_none(app, store):
+    row = save(store)
+    os.unlink(os.path.join(store, row["id"] + ".bin"))
+    assert storage.load_user_file(1, row["id"], master=MASTER) is None
+
+
+def test_save_mismatched_store_dir_raises(app, store, tmp_path):
+    with pytest.raises(RuntimeError):
+        storage.save_upload(
+            str(tmp_path / "elsewhere"), PLAINTEXT, user_id=1,
+            filename="case.pdf", mime="application/pdf", master=MASTER,
+        )
+
+
 def test_delete_removes_blob_and_row(app, store, user_db):
     row = save(store)
     assert storage.delete_user_file(1, row["id"]) is True

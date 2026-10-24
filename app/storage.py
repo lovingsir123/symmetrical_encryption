@@ -36,10 +36,19 @@ def save_upload(store_dir: str, plaintext: bytes, *, user_id: int,
                 filename: str, mime: str, master: bytes) -> dict:
     """Encrypt, write the blob, insert the DB row; clean up on any failure.
 
+    Contract: store_dir must equal the app's UPLOAD_FOLDER -- load/delete
+    resolve blobs from that config key, so a different directory would be
+    silently unreadable (RuntimeError instead).
+
     Order: encrypt -> write temp -> os.replace -> insert row -> commit.
     If the insert fails after the blob landed, the blob is removed so neither
     orphan rows nor partial files survive.
     """
+    if os.path.abspath(store_dir) != os.path.abspath(
+        current_app.config["UPLOAD_FOLDER"]
+    ):
+        raise RuntimeError("store_dir must equal the app's UPLOAD_FOLDER")
+
     file_id = uuid.uuid4().hex
     blob = crypto.encrypt_file(
         plaintext, master=master, owner_id=user_id, file_id=file_id,
