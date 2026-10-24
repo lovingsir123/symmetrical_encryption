@@ -24,4 +24,7 @@ if not SECRET_KEY or not MASTER_KEY:
         stacklevel=1,
     )
 
-ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "gif", "doc", "docx"}
+ALLOWED_EXTENSIONS = {
+    "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv",
+    "jpg", "jpeg", "png", "mp4", "mov", "avi", "mkv",
+}

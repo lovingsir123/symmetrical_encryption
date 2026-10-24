@@ -20,6 +20,7 @@ def get_db() -> sqlite3.Connection:
             detect_types=sqlite3.PARSE_DECLTYPES,
         )
         g.db.row_factory = sqlite3.Row
+        g.db.execute("PRAGMA foreign_keys = ON")
     return g.db
 
 
@@ -38,8 +39,17 @@ def init_db(app) -> None:
 
 
 def init_db_command() -> None:
-    """Create the SQLite database file."""
+    """Create the SQLite database file and apply the users/files schema."""
     init_db(current_app)
+    from app import models
+
+    conn = sqlite3.connect(get_db_path())
+    try:
+        conn.execute("PRAGMA foreign_keys = ON")
+        models.create_tables(conn)
+        conn.commit()
+    finally:
+        conn.close()
     click.echo("Database initialized.")
 
 
