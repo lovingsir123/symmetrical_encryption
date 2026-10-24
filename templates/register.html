@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Register - Legal-Aid Vault{% endblock %}
+{% block content %}
+<section class="card">
+    <h2>Create an account</h2>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <label for="username">Username (3-64 characters)</label>
+        {{ form.username() }}
+        <label for="password">Password (at least 8 characters)</label>
+        {{ form.password() }}
+        <button type="submit">Create account</button>
+    </form>
+    <p>Already registered? <a href="{{ url_for('vault.login') }}">Log in</a>.</p>
+</section>
+{% endblock %}

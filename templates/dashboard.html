@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Legal-Aid Vault{% endblock %}
+{% block content %}
+<section class="card">
+    <h2>Upload a file</h2>
+    <form method="post" action="{{ url_for('vault.upload') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <label for="file">Choose a file (original name is stored encrypted)</label>
+        {{ form.file(id="file") }}
+        <button type="submit">Upload</button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Your files</h2>
+    <p class="note">Files are listed by internal ID only. The original file
+    name is never listed here: it is shown once on upload and kept encrypted
+    inside the stored blob.</p>
+    {% if files %}
+    <table>
+        <thead>
+        <tr><th scope="col">File ID</th><th scope="col">Uploaded</th><th scope="col">Stored size</th><th scope="col">Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for f in files %}
+        <tr>
+            <td><code>{{ f["id"] }}</code></td>
+            <td>{{ f["created_at"] }}</td>
+            <td>{{ f["enc_size"]|hsize }}</td>
+            <td>
+                <a href="{{ url_for('vault.download', file_id=f['id']) }}">Download</a>
+                <form class="inline" method="post" action="{{ url_for('vault.delete', file_id=f['id']) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No files yet. Upload one above.</p>
+    {% endif %}
+</section>
+{% endblock %}

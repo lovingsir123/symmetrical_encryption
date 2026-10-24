@@ -1,5 +1,123 @@
-/* Placeholder stylesheet; replaced by a later task. */
+/* Basic, minimal, responsive styling for the vault web UI. */
+
 body {
-    font-family: sans-serif;
-    margin: 2rem;
+    font-family: system-ui, "Segoe UI", sans-serif;
+    margin: 0;
+    color: #1d2430;
+    background: #f5f6f8;
+}
+
+.site-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #22375a;
+    color: #fff;
+}
+
+.site-header h1 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.site-header a {
+    color: #fff;
+    margin-left: 1rem;
+}
+
+main {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #d5d9e0;
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin: 0.75rem 0 0.25rem;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="file"] {
+    width: 100%;
+    max-width: 24rem;
+    padding: 0.45rem 0.5rem;
+    border: 1px solid #b9c0cb;
+    border-radius: 4px;
+}
+
+button {
+    display: inline-block;
+    margin-top: 0.9rem;
+    padding: 0.45rem 1.1rem;
+    background: #22375a;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form.inline {
+    display: inline-block;
+    margin: 0;
+}
+
+form.inline button {
+    margin-top: 0;
+    padding: 0.25rem 0.7rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid #e3e6ea;
+    word-break: break-all;
+}
+
+.note {
+    color: #5a6472;
+    font-size: 0.9rem;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+}
+
+.flashes li {
+    background: #eaf3ec;
+    border: 1px solid #bcd8c2;
+    color: #1f5c2f;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    margin: 0.4rem 0;
+}
+
+@media (max-width: 600px) {
+    .site-header {
+        padding: 1rem;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
 }

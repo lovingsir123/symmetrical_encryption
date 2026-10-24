@@ -2,11 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Legal-Aid Vault{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header><h1>Legal-Aid Vault</h1></header>
+<header class="site-header">
+    <h1>Legal-Aid Vault</h1>
+    <nav>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('vault.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('vault.logout') }}">Log out</a>
+        {% else %}
+            <a href="{{ url_for('vault.login') }}">Log in</a>
+            <a href="{{ url_for('vault.register') }}">Register</a>
+        {% endif %}
+    </nav>
+</header>
+<main>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes" aria-live="polite">
+                {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
+</main>
 </body>
 </html>

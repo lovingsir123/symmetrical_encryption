@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL COLLATE NOCASE,
     password_hash TEXT NOT NULL,
+    failed_logins INTEGER NOT NULL DEFAULT 0,   -- consecutive failed logins
+    locked_until TEXT,                          -- UTC ISO timestamp, nullable
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS files (
@@ -74,3 +76,17 @@ def delete_file(db, file_id: str, owner_id: int) -> bool:
         "DELETE FROM files WHERE id = ? AND owner_id = ?", (file_id, owner_id)
     )
     return cur.rowcount == 1
+
+
+def list_files_for_owner(db, owner_id: int):
+    """Dashboard listing: id, size, date only.
+
+    Deliberately does NOT include any plaintext filename/mime: those live
+    only inside the encrypted META, so a list that showed names would have
+    to decrypt every file on every visit.
+    """
+    return db.execute(
+        "SELECT id, enc_size, created_at FROM files "
+        "WHERE owner_id = ? ORDER BY created_at DESC, id DESC",
+        (owner_id,),
+    ).fetchall()

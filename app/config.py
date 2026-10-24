@@ -28,3 +28,10 @@ ALLOWED_EXTENSIONS = {
     "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv",
     "jpg", "jpeg", "png", "mp4", "mov", "avi", "mkv",
 }
+
+# Session cookie hardening. SESSION_COOKIE_SECURE=False is a dev-only value:
+# plain-HTTP localhost cannot mark cookies Secure. Behind HTTPS set it to
+# True before any real deployment.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False
