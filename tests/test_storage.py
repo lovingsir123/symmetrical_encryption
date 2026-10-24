@@ -123,10 +123,21 @@ def test_check_extension():
         assert storage.check_extension(f"file.{ext}")
         assert storage.check_extension(f"FILE.{ext.upper()}")
     assert not storage.check_extension("file.exe")
-    assert not storage.check_extension("noext")
-    assert not storage.check_extension("a.b.pdf")  # more than one dot segment
-    assert not storage.check_extension(".pdf")
+    assert not storage.check_extension("wildcard.exe")  # ext segment checked
+    assert not storage.check_extension("evil")  # no extension
+    assert not storage.check_extension("file.")  # trailing dot
+    assert not storage.check_extension(".pdf")  # empty stem
     assert not storage.check_extension("")
+    assert not storage.check_extension(None)
+    assert not storage.check_extension(b"file.pdf")  # non-string
+    assert storage.check_extension("report.final.pdf")
+    assert storage.check_extension("2024-10-26.scan.jpg")
+    assert storage.check_extension("case notes v2.xlsx")
+    assert storage.check_extension("file.TXT")
+    assert not storage.check_extension("a.b.pdf.uu")
+    assert not storage.check_extension("im back.my pdf")
+    assert not storage.check_extension("   .pdf")
+    assert storage.check_extension(" a.pdf")
 
 
 def test_failed_encrypt_no_leftovers(app, store, user_db, monkeypatch):

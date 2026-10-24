@@ -124,12 +124,13 @@ def delete_user_file(user_id: int, file_id: str) -> bool:
 
 
 def check_extension(filename: str) -> bool:
-    """True iff the filename has exactly one dot segment in the allowlist.
+    """True iff the final extension segment is in the allowlist.
 
-    Lowercase compare; multi-dot names like "a.b.pdf" are rejected, and the
-    extension never decides anything else (mime is never consulted).
+    Lowercase compare; only the segment after the last dot is validated, so
+    multi-dot real-world names like "report.final.pdf" pass. The extension
+    never decides anything else (mime is never consulted).
     """
-    if not filename or filename.count(".") != 1:
+    if not isinstance(filename, str) or "." not in filename:
         return False
-    name, _, ext = filename.partition(".")
-    return bool(name) and ext.lower() in ALLOWED_EXTENSIONS
+    stem, _, ext = filename.rpartition(".")
+    return bool(stem.strip()) and ext.lower() in ALLOWED_EXTENSIONS
