@@ -1,0 +1,447 @@
+{
+  "env": {
+    "timestamp_utc": "2026-10-26T17:11:34+00:00",
+    "python_version": "3.12.16",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "cpu_count": 16,
+    "cpu_model": "Intel(R) Core(TM) i7-14700HX",
+    "pycryptodome_version": "4.2.0",
+    "flask_version": "3.1.3"
+  },
+  "disclosure": "Constructions are NOT identical: AES-GCM is authenticated encryption (AAD+tag inside enc, tag verify inside dec). DES-CBC and RC4 use a separate HMAC-SHA-256 authenticate/deny construct (MAC computed within enc; constant-time verify before any dec work). Comparison includes authentication overhead BY DESIGN per assignment.",
+  "unit_convention": "MB/s = MiB/s = size_bytes / (1024*1024) / seconds; throughput = plaintext bytes processed per second in both directions.",
+  "caveats": [],
+  "rows": [
+    {
+      "config": "aes-gcm",
+      "size_mib": 1,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.000729,
+      "stdev_s": 0.000124,
+      "throughput_mib_s": 1372.2428,
+      "min_s": 0.000652,
+      "max_s": 0.000955,
+      "ct_size_bytes": 1048604,
+      "storage_overhead_bytes": 28
+    },
+    {
+      "config": "aes-gcm",
+      "size_mib": 1,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.000628,
+      "stdev_s": 0.000174,
+      "throughput_mib_s": 1592.9376,
+      "min_s": 0.000623,
+      "max_s": 0.000987,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 1,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.027374,
+      "stdev_s": 0.000377,
+      "throughput_mib_s": 36.5316,
+      "min_s": 0.026894,
+      "max_s": 0.027827,
+      "ct_size_bytes": 1048624,
+      "storage_overhead_bytes": 48
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 1,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.026009,
+      "stdev_s": 0.000459,
+      "throughput_mib_s": 38.4487,
+      "min_s": 0.025889,
+      "max_s": 0.02697,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 1,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.002287,
+      "stdev_s": 0.000141,
+      "throughput_mib_s": 437.3129,
+      "min_s": 0.002243,
+      "max_s": 0.002588,
+      "ct_size_bytes": 1048608,
+      "storage_overhead_bytes": 32
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 1,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.002336,
+      "stdev_s": 0.000109,
+      "throughput_mib_s": 428.1377,
+      "min_s": 0.002217,
+      "max_s": 0.002508,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 1,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.031461,
+      "stdev_s": 0.00044,
+      "throughput_mib_s": 31.7856,
+      "min_s": 0.031007,
+      "max_s": 0.032147,
+      "ct_size_bytes": 2097515,
+      "storage_overhead_bytes": 1048939
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 1,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.030743,
+      "stdev_s": 0.000506,
+      "throughput_mib_s": 32.5276,
+      "min_s": 0.030138,
+      "max_s": 0.031504,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "aes-gcm",
+      "size_mib": 10,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.006666,
+      "stdev_s": 0.000896,
+      "throughput_mib_s": 1500.1939,
+      "min_s": 0.006138,
+      "max_s": 0.008359,
+      "ct_size_bytes": 10485788,
+      "storage_overhead_bytes": 28
+    },
+    {
+      "config": "aes-gcm",
+      "size_mib": 10,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.006418,
+      "stdev_s": 0.001222,
+      "throughput_mib_s": 1558.1321,
+      "min_s": 0.006139,
+      "max_s": 0.009013,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 10,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.273451,
+      "stdev_s": 0.00253,
+      "throughput_mib_s": 36.5696,
+      "min_s": 0.270255,
+      "max_s": 0.27669,
+      "ct_size_bytes": 10485808,
+      "storage_overhead_bytes": 48
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 10,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.261733,
+      "stdev_s": 0.001371,
+      "throughput_mib_s": 38.2069,
+      "min_s": 0.260557,
+      "max_s": 0.264068,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 10,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.023609,
+      "stdev_s": 0.001127,
+      "throughput_mib_s": 423.559,
+      "min_s": 0.023452,
+      "max_s": 0.02612,
+      "ct_size_bytes": 10485792,
+      "storage_overhead_bytes": 32
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 10,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.023569,
+      "stdev_s": 0.001107,
+      "throughput_mib_s": 424.2797,
+      "min_s": 0.023196,
+      "max_s": 0.025913,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 10,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.308704,
+      "stdev_s": 0.005838,
+      "throughput_mib_s": 32.3935,
+      "min_s": 0.305854,
+      "max_s": 0.320224,
+      "ct_size_bytes": 20971885,
+      "storage_overhead_bytes": 10486125
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 10,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.301362,
+      "stdev_s": 0.00458,
+      "throughput_mib_s": 33.1826,
+      "min_s": 0.299443,
+      "max_s": 0.310839,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "aes-gcm",
+      "size_mib": 50,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.054551,
+      "stdev_s": 0.003638,
+      "throughput_mib_s": 916.5714,
+      "min_s": 0.053251,
+      "max_s": 0.062096,
+      "ct_size_bytes": 52428828,
+      "storage_overhead_bytes": 28
+    },
+    {
+      "config": "aes-gcm",
+      "size_mib": 50,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.055342,
+      "stdev_s": 0.005278,
+      "throughput_mib_s": 903.4689,
+      "min_s": 0.053282,
+      "max_s": 0.066595,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 50,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 1.396801,
+      "stdev_s": 0.004076,
+      "throughput_mib_s": 35.7961,
+      "min_s": 1.394663,
+      "max_s": 1.404893,
+      "ct_size_bytes": 52428848,
+      "storage_overhead_bytes": 48
+    },
+    {
+      "config": "des-cbc-hmac",
+      "size_mib": 50,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 1.3447,
+      "stdev_s": 0.005693,
+      "throughput_mib_s": 37.183,
+      "min_s": 1.340508,
+      "max_s": 1.355675,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 50,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 0.141014,
+      "stdev_s": 0.001062,
+      "throughput_mib_s": 354.5738,
+      "min_s": 0.139765,
+      "max_s": 0.142686,
+      "ct_size_bytes": 52428832,
+      "storage_overhead_bytes": 32
+    },
+    {
+      "config": "rc4-hmac",
+      "size_mib": 50,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 0.14293,
+      "stdev_s": 0.002057,
+      "throughput_mib_s": 349.8221,
+      "min_s": 0.139757,
+      "max_s": 0.145263,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 50,
+      "direction": "enc",
+      "reps": 5,
+      "median_s": 1.614284,
+      "stdev_s": 0.016523,
+      "throughput_mib_s": 30.9735,
+      "min_s": 1.596318,
+      "max_s": 1.637391,
+      "ct_size_bytes": 104857965,
+      "storage_overhead_bytes": 52429165
+    },
+    {
+      "config": "pipeline",
+      "size_mib": 50,
+      "direction": "dec",
+      "reps": 5,
+      "median_s": 1.610491,
+      "stdev_s": 0.021566,
+      "throughput_mib_s": 31.0464,
+      "min_s": 1.566966,
+      "max_s": 1.620449,
+      "ct_size_bytes": "",
+      "storage_overhead_bytes": ""
+    }
+  ],
+  "ct_sizes_per_rep": {
+    "aes-gcm/1MiB": [
+      1048604,
+      1048604,
+      1048604,
+      1048604,
+      1048604
+    ],
+    "des-cbc-hmac/1MiB": [
+      1048624,
+      1048624,
+      1048624,
+      1048624,
+      1048624
+    ],
+    "rc4-hmac/1MiB": [
+      1048608,
+      1048608,
+      1048608,
+      1048608,
+      1048608
+    ],
+    "pipeline/1MiB": [
+      2097515,
+      2097515,
+      2097515,
+      2097515,
+      2097515
+    ],
+    "aes-gcm/10MiB": [
+      10485788,
+      10485788,
+      10485788,
+      10485788,
+      10485788
+    ],
+    "des-cbc-hmac/10MiB": [
+      10485808,
+      10485808,
+      10485808,
+      10485808,
+      10485808
+    ],
+    "rc4-hmac/10MiB": [
+      10485792,
+      10485792,
+      10485792,
+      10485792,
+      10485792
+    ],
+    "pipeline/10MiB": [
+      20971885,
+      20971885,
+      20971885,
+      20971885,
+      20971885
+    ],
+    "aes-gcm/50MiB": [
+      52428828,
+      52428828,
+      52428828,
+      52428828,
+      52428828
+    ],
+    "des-cbc-hmac/50MiB": [
+      52428848,
+      52428848,
+      52428848,
+      52428848,
+      52428848
+    ],
+    "rc4-hmac/50MiB": [
+      52428832,
+      52428832,
+      52428832,
+      52428832,
+      52428832
+    ],
+    "pipeline/50MiB": [
+      104857965,
+      104857965,
+      104857965,
+      104857965,
+      104857965
+    ]
+  },
+  "sanity": {
+    "1": {
+      "aes-gcm-enc": 0.000729,
+      "aes-gcm-dec": 0.000628,
+      "des-cbc-hmac-enc": 0.027374,
+      "des-cbc-hmac-dec": 0.026009,
+      "rc4-hmac-enc": 0.002287,
+      "rc4-hmac-dec": 0.002336,
+      "pipeline-enc": 0.031461,
+      "pipeline-dec": 0.030743
+    },
+    "10": {
+      "aes-gcm-enc": 0.006666,
+      "aes-gcm-dec": 0.006418,
+      "des-cbc-hmac-enc": 0.273451,
+      "des-cbc-hmac-dec": 0.261733,
+      "rc4-hmac-enc": 0.023609,
+      "rc4-hmac-dec": 0.023569,
+      "pipeline-enc": 0.308704,
+      "pipeline-dec": 0.301362
+    },
+    "50": {
+      "aes-gcm-enc": 0.054551,
+      "aes-gcm-dec": 0.055342,
+      "des-cbc-hmac-enc": 1.396801,
+      "des-cbc-hmac-dec": 1.3447,
+      "rc4-hmac-enc": 0.141014,
+      "rc4-hmac-dec": 0.14293,
+      "pipeline-enc": 1.614284,
+      "pipeline-dec": 1.610491
+    }
+  }
+}
