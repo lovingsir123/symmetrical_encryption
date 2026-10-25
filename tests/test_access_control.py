@@ -113,6 +113,14 @@ def test_b_delete_a_file_csrf_fails_closed(app, client_a, client_b):
     before_blob = open(blob_path(app, file_id), "rb").read()
 
     register_and_login(client_b, USER_B)
+    # B uploads their own file: must appear on B's dashboard...
+    b_file_id = upload_secret(client_b)
+    dash = client_b.get("/dashboard")
+    assert b_file_id.encode() in dash.data
+    # ...while A's file id stays invisible.
+    assert file_id.encode() not in dash.data
+
+    # B's CSRF-protected delete of A's file fails closed.
     token = _csrf(client_b.get("/dashboard").data)
     resp = client_b.post(
         f"/delete/{file_id}",
@@ -125,10 +133,6 @@ def test_b_delete_a_file_csrf_fails_closed(app, client_a, client_b):
     after_row = file_row(app, file_id)
     assert after_row == before_row
     assert open(blob_path(app, file_id), "rb").read() == before_blob
-
-    # B's dashboard must not list A's file.
-    dash = client_b.get("/dashboard")
-    assert file_id.encode() not in dash.data
 
     # Direct storage layer: same fail-closed None as Task 3.
     with app.app_context():

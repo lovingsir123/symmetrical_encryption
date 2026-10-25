@@ -47,14 +47,19 @@ def assert_no_plaintext_on_disk(tmp_path):
 
 
 def test_blob_is_not_plaintext(app, user_and_blob):
-    _file_id, _blob_path, blob = user_and_blob
+    file_id, _blob_path, blob = user_and_blob
     assert blob != PLAINTEXT
     assert PLAINTEXT not in blob
     assert blob[:4] == b"LVLT"
+    # Success leaves only the final blob: no temp/part files.
+    assert sorted(os.listdir(app.config["UPLOAD_FOLDER"])) == [
+        f"{file_id}.bin"
+    ]
 
 
 def test_blob_has_no_filename_bytes(app, user_and_blob):
     _file_id, _blob_path, blob = user_and_blob
+    assert SECRET_FILENAME.encode() not in blob
     assert b"secret" not in blob.lower()
 
 
@@ -65,6 +70,7 @@ def test_db_has_no_filename_column_or_value(app, user_and_blob):
             "PRAGMA table_info(files)").fetchall()}
         assert not {"filename", "mime", "name"} & cols
     db_bytes = open(app.config["DATABASE"], "rb").read()
+    assert SECRET_FILENAME.encode() not in db_bytes
     assert b"secret" not in db_bytes.lower()
 
 
