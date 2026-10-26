@@ -120,6 +120,11 @@ def derive_keys(master: bytes, salt: bytes) -> dict[str, bytes]:
     return keys
 
 
+def hash_plaintext(plaintext: bytes) -> str:
+    """The one plaintext-digest definition used by META and the DB row."""
+    return hashlib.sha256(plaintext).hexdigest()
+
+
 def _ad_meta(version: int, salt: bytes) -> bytes:
     """AES-GCM associated data for the META section: MAGIC | VER | SALT."""
     return _MAGIC + struct.pack("<H", version) + salt
@@ -162,7 +167,7 @@ def encrypt_file(
             "size": len(plaintext),
             "owner_id": int(owner_id),
             "file_id": file_id,
-            "sha256": hashlib.sha256(plaintext).hexdigest(),
+            "sha256": hash_plaintext(plaintext),
         },
         sort_keys=True,
     ).encode("utf-8")
@@ -297,7 +302,7 @@ def decrypt_file(
     if not hmac.compare_digest(aes_ct_inner, aes_ct):
         raise CryptoError("integrity check failed")
 
-    if len(plaintext) != meta["size"] or hashlib.sha256(plaintext).hexdigest() != meta["sha256"]:
+    if len(plaintext) != meta["size"] or hash_plaintext(plaintext) != meta["sha256"]:
         raise CryptoError("integrity check failed")
 
     return plaintext, meta

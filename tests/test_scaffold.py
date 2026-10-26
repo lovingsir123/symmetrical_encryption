@@ -11,9 +11,17 @@ def app(tmp_path):
         {
             "DATABASE": str(tmp_path / "vault.db"),
             "UPLOAD_FOLDER": str(tmp_path / "uploads"),
+            "SECRET_KEY": "unit-test-secret",
+            "MASTER_KEY": "00" * 32,
+            "TESTING": True,
+            "WTF_CSRF_ENABLED": False,
         }
     )
-    yield app
+    with app.app_context():
+        from app.models import create_tables
+        from db import get_db
+        create_tables(get_db())
+        yield app
 
 
 @pytest.fixture()
@@ -25,6 +33,21 @@ def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
     assert response.get_json() == {"status": "ok"}
+
+
+def test_root_redirects_anonymous_to_login(client):
+    with client:
+        response = client.get("/")
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/login")
+
+
+def test_root_redirects_authenticated_to_dashboard(client):
+    client.post("/register", data={"username": "clerk", "password": "s3cret-password-xyz"})
+    client.post("/login", data={"username": "clerk", "password": "s3cret-password-xyz"})
+    response = client.get("/")
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/dashboard")
 
 
 def test_config_keys(app):

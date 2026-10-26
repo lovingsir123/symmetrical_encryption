@@ -1,5 +1,6 @@
 """HTTP route tests (Task 4): dashboards, upload/download/delete, CSRF, 413, extensions."""
 
+import hashlib
 import io
 import os
 from urllib.parse import urlsplit
@@ -113,6 +114,15 @@ def test_dashboard_lists_metadata_not_filenames(client, app):
     response = client.get("/dashboard")
     assert b"notes for the case" not in response.data
     assert b"Uploaded" in response.data
+
+
+def test_dashboard_lists_sha256_digest(client, app):
+    register_and_login(client)
+    content = b"THE-PLAINTEXT-BYTES" * 32
+    upload(client, content=content)
+    expected = hashlib.sha256(content).hexdigest()
+    response = client.get("/dashboard")
+    assert expected.encode() in response.data
 
 
 def test_download_unknown_id_404(client, app):

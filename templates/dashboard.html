@@ -15,11 +15,12 @@
     <h2>Your files</h2>
     <p class="note">Files are listed by internal ID only. The original file
     name is never listed here: it is shown once on upload and kept encrypted
-    inside the stored blob.</p>
+    inside the stored blob. The SHA-256 digest is shown so you can verify an
+    intact file by hand against an independent record.</p>
     {% if files %}
     <table>
         <thead>
-        <tr><th scope="col">File ID</th><th scope="col">Uploaded</th><th scope="col">Stored size</th><th scope="col">Actions</th></tr>
+        <tr><th scope="col">File ID</th><th scope="col">Uploaded</th><th scope="col">Stored size</th><th scope="col">SHA-256</th><th scope="col">Actions</th></tr>
         </thead>
         <tbody>
         {% for f in files %}
@@ -27,6 +28,7 @@
             <td><code>{{ f["id"] }}</code></td>
             <td>{{ f["created_at"] }}</td>
             <td>{{ f["enc_size"]|hsize }}</td>
+            <td><code class="hash">{{ f["sha256"] }}</code></td>
             <td>
                 <a href="{{ url_for('vault.download', file_id=f['id']) }}">Download</a>
                 <form class="inline" method="post" action="{{ url_for('vault.delete', file_id=f['id']) }}">

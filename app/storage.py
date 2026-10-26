@@ -74,6 +74,7 @@ def save_upload(store_dir: str, plaintext: bytes, *, user_id: int,
         db = get_db()
         insert_file(
             db, file_id=file_id, owner_id=user_id, enc_size=len(blob),
+            sha256=crypto.hash_plaintext(plaintext),
             public_token=uuid.uuid4().hex,
         )
         db.commit()

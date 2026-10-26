@@ -93,6 +93,13 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
+@bp.get("/")
+def index():
+    return redirect(
+        url_for("vault.dashboard" if current_user.is_authenticated else "vault.login")
+    )
+
+
 @bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:

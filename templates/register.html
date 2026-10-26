@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Register - Legal-Aid Vault{% endblock %}
 {% block content %}
+<div class="auth-center">
 <section class="card">
     <h2>Create an account</h2>
     <form method="post">
@@ -13,4 +14,5 @@
     </form>
     <p>Already registered? <a href="{{ url_for('vault.login') }}">Log in</a>.</p>
 </section>
+</div>
 {% endblock %}

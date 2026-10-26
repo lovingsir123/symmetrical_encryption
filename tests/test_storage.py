@@ -52,8 +52,10 @@ def save(store, plaintext=PLAINTEXT, user_id=1, filename="case.pdf",
 
 def test_save_load_roundtrip(app, store, user_db):
     row = save(store)
-    assert set(row) == {"id", "owner_id", "enc_size", "public_token", "created_at"}
+    assert set(row) == {"id", "owner_id", "enc_size", "sha256", "public_token",
+                        "created_at"}
     assert row["owner_id"] == 1
+    assert row["sha256"] == hashlib.sha256(PLAINTEXT).hexdigest()
     assert user_db.execute(
         "SELECT COUNT(*) FROM files WHERE public_token=?", (row["public_token"],)
     ).fetchone()[0] == 1

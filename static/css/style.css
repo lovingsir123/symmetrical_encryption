@@ -29,7 +29,7 @@ body {
 }
 
 main {
-    max-width: 56rem;
+    max-width: 80rem;
     margin: 0 auto;
     padding: 1.5rem 1rem;
 }
@@ -89,12 +89,22 @@ td {
     text-align: left;
     padding: 0.45rem 0.5rem;
     border-bottom: 1px solid #e3e6ea;
-    word-break: break-all;
+    white-space: nowrap;
 }
 
 .note {
     color: #5a6472;
     font-size: 0.9rem;
+}
+
+.auth-center {
+    max-width: 27rem;
+    margin: 0 auto;
+}
+
+.hash {
+    font-size: 0.78rem;
+    color: #47505c;
 }
 
 .flashes {

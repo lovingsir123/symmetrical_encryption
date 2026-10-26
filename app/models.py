@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS files (
     id TEXT PRIMARY KEY,        -- uuid4 hex, internal
     owner_id INTEGER NOT NULL REFERENCES users(id),
     enc_size INTEGER NOT NULL,
+    sha256 TEXT NOT NULL,       -- plaintext digest, verified at decrypt
     public_token TEXT UNIQUE NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
@@ -25,8 +26,16 @@ CREATE TABLE IF NOT EXISTS files (
 
 
 def create_tables(db) -> None:
-    """Apply the schema to an open connection."""
+    """Apply the schema to an open connection.
+
+    Existing databases get a stamped migration: prior schemas had no
+    ``files.sha256`` (those rows keep an empty digest — their blobs still
+    verify through the META copy inside the envelope).
+    """
     db.executescript(SCHEMA)
+    cols = {r[1] for r in db.execute("PRAGMA table_info(files)")}
+    if "sha256" not in cols:
+        db.execute("ALTER TABLE files ADD COLUMN sha256 TEXT NOT NULL DEFAULT ''")
 
 
 def insert_user(db, username: str, password_hash: str) -> int:
@@ -45,13 +54,13 @@ def get_user_by_name(db, username: str):
     ).fetchone()
 
 
-def insert_file(db, *, file_id: str, owner_id: int, enc_size: int,
+def insert_file(db, *, file_id: str, owner_id: int, enc_size: int, sha256: str,
                 public_token: str) -> None:
     """Insert one file row (owner_id comes from the authenticated caller)."""
     db.execute(
-        "INSERT INTO files (id, owner_id, enc_size, public_token) "
-        "VALUES (?, ?, ?, ?)",
-        (file_id, owner_id, enc_size, public_token),
+        "INSERT INTO files (id, owner_id, enc_size, sha256, public_token) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (file_id, owner_id, enc_size, sha256, public_token),
     )
 
 
@@ -79,14 +88,15 @@ def delete_file(db, file_id: str, owner_id: int) -> bool:
 
 
 def list_files_for_owner(db, owner_id: int):
-    """Dashboard listing: id, size, date only.
+    """Dashboard listing: id, size, hash, date only.
 
     Deliberately does NOT include any plaintext filename/mime: those live
     only inside the encrypted META, so a list that showed names would have
-    to decrypt every file on every visit.
+    to decrypt every file on every visit. The SHA-256 digest is included so
+    the owner can verify integrity against an independent record by hand.
     """
     return db.execute(
-        "SELECT id, enc_size, created_at FROM files "
+        "SELECT id, enc_size, sha256, created_at FROM files "
         "WHERE owner_id = ? ORDER BY created_at DESC, id DESC",
         (owner_id,),
     ).fetchall()

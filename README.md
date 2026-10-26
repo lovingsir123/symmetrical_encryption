@@ -13,6 +13,31 @@ server *before* it hits the disk, each user sees only their own files, and the
 key material is envelope-encrypted by a master key — so a stolen disk without
 the master key gives the attacker ciphertext only.
 
+## Data classification (UU PDP / GDPR)
+
+Per Indonesia's Personal Data Protection Law No. 27/2022 (UU PDP): **sensitive
+personal data** is the specific list in Pasal 4(2) — health records, biometrics,
+criminal records, financial data and similar categories — and **general personal
+data** is everything in Pasal 4(3) that identifies a person (name, address,
+documents, photos). Under GDPR the same split is Art. 9 (special categories)
+and Art. 10 (criminal data) versus Art. 5 principles for ordinary personal data.
+
+For this clinic scenario:
+
+- *Private/sensitive:* identity documents and their scans (KTP, passports),
+  case files containing client financial or health information, anything
+  naming a client alongside their legal, financial or medical situation —
+  UU PDP Pasal 4(2) and GDPR Art. 9 material.
+- *General:* internal office documents that do not identify a client (meeting
+  notes, templates), general correspondence without client data — UU PDP
+  Pasal 4(3)/GDPR ordinary personal data at most.
+
+The application applies **one uniform protection level** to every upload
+regardless of class: full AES→DES→RC4 envelope, authenticated login, per-user
+isolation. A more refined deployment could label files per class and apply
+stricter retention/audit to the sensitive tier; that is out of the
+assignment's scope.
+
 ## Architecture & data flow
 
 Flask app (factory in `app/__init__.py`, routes in `app/routes.py`,
@@ -31,10 +56,11 @@ auth in `app/auth.py`, SQLite schema in `app/models.py`, storage/DB glue in
    ciphertext and are constant-time verified before any decrypt work on
    that layer;
 4. the envelope blob lands as `instance/uploads/<blob>` and a metadata row
-   (filename, owner, size, hash, blob id) lands in `instance/vault.db`;
-   download reverses the chain: RC4 → DES → AES, layer tags verified, and
-   the recovered SHA-256 must match the sealed value before the bytes are
-   served.
+   (owner, encrypted size, SHA-256 digest, blob id, public token) lands in
+   `instance/vault.db` — the file name and mime are never in the DB, only
+   inside the envelope's encrypted META; download reverses the chain:
+   RC4 → DES → AES, layer tags verified, and the recovered SHA-256 must
+   match the sealed value before the bytes are served.
 
 ## Setup
 
@@ -104,7 +130,7 @@ register a user first — every file belongs to one account only.
 conda run -n legalaid-vault python -m pytest -q
 ```
 
-Verified: 87 passed.
+Verified: 90 passed.
 
 ## Benchmarks
 
@@ -147,6 +173,21 @@ Outputs land in `results/benchmark_results.csv` and
 reproduce). See those files for the latest measured run of this machine.
 Numbers are WSL2-specific (HP Omen, mixed thermal state) — treat them as
 illustrations, not as cryptographic law.
+
+**What the numbers mean for the clinic scenario (50 MiB files, this
+machine):** AES-256-GCM runs at 946.1 MiB/s, RC4 + HMAC at 374.8 MiB/s, and
+DES-CBC + HMAC at 37.7 MiB/s. The full production pipeline moves ~32.7 MiB/s
+(encrypt) / ~33.1 MiB/s (decrypt) — about **3.5% of raw AES**, because the
+obsolete DES layer is the bottleneck, not AES. Concretely: a typical scanned
+identity document (a few MB) is sealed and opened in well under a second; a
+large 50 MiB video takes ~1.5 s to store and ~1.5 s to retrieve — well within
+a front-desk workflow. The pipeline produces ~2× the original file size in
+ciphertext (~100 MB stored per 50 MiB upload), so the clinic's disk fills
+twice as fast; backing up a 5 GB archive through this stack would take
+~3 minutes of pure encryption time. Order-of-choice for any real system:
+AES-256-GCM alone; the DES and RC4 layers exist only because the assignment
+mandates them and cost a ~29× throughput floor for zero added practical
+security (see Limitations).
 
 ## Supported file types & size limit
 
@@ -194,11 +235,10 @@ proper key management — not to shore up the legacy layers.
 app/            application factory, routes, auth, crypto, storage, models, config
 benchmarks/     benchmark.py (CLI: --sizes/--reps/--warmup/--out)
 db.py           SQLite glue (per-request conn, teardown, init-db CLI)
-docs/           implementation plan
 results/        measured benchmark CSV + JSON summary (deliverables — tracked)
 static/         style.css
 templates/      Jinja2 pages (login/register/dashboard/error/base)
-tests/          pytest suite (87 tests)
+tests/          pytest suite (90 tests)
 .env.example    placeholder env file (real .env is git-ignored)
 AI_USAGE_TEMPLATE.md   AI usage disclosure template
 environment.yml / requirements.txt  environment definitions
